@@ -1,0 +1,97 @@
+<!-- Breadcrumb + CTA -->
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a routerLink="/dashboard">Dashboard</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Referrals</li>
+        <li class="breadcrumb-item active" aria-current="page">Pro Referral</li>
+      </ol>
+    </nav>
+    <button class="btn btn-primary" (click)="openCreate()">
+      <i class="bx bx-plus me-1"></i> New Referral
+    </button>
+  </div>
+  
+  <!-- Table -->
+  <div class="card">
+    <h5 class="card-header">Pro Referral</h5>
+    <div class="table-responsive text-nowrap">
+      <table class="table">
+        <thead class="table-light">
+          <tr>
+            <th>Code</th>
+            <th>Premium</th>
+            <th>Bonus (Referrer/Referred)</th>
+            <th>Period (UTC)</th>
+            <th>Active</th>
+            <th class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="table-border-bottom-0">
+          <tr *ngFor="let r of rows()">
+            <td><i class="bx bx-purchase-tag-alt me-2"></i><strong>{{ r.referral_code }}</strong></td>
+            <td>
+              <span class="badge" [class.bg-success]="r.is_premium" [class.bg-secondary]="!r.is_premium">
+                {{ r.is_premium ? 'Premium' : 'Standard' }}
+              </span>
+            </td>
+            <td>₹{{ r.bonus_referrer }} / ₹{{ r.bonus_referred }}</td>
+            <td>
+              <small class="text-muted">{{ r.starts_at | date:'medium' }}</small>
+              <span class="mx-1">→</span>
+              <small class="text-muted">{{ r.ends_at | date:'medium' }}</small>
+            </td>
+            <td>
+              <div class="form-check form-switch m-0" (click)="$event.stopPropagation()">
+                <input class="form-check-input" type="checkbox" [checked]="r.active" (change)="toggleActiveInline(r)">
+              </div>
+            </td>
+            <td class="text-end">
+              <div class="dropdown d-inline-block" (click)="$event.stopPropagation()">
+                <button type="button"
+                        class="btn p-0 dropdown-toggle hide-arrow"
+                        (click)="toggleRowMenu(r.referral_code, $event)"
+                        [attr.aria-expanded]="isRowMenuOpen(r.referral_code)">
+                  <i class="bx bx-dots-vertical-rounded"></i>
+                </button>
+                <div class="dropdown-menu dropdown-menu-end show" *ngIf="isRowMenuOpen(r.referral_code)">
+                  <a class="dropdown-item" href="javascript:void(0);" (click)="openEdit(r)">
+                    <i class="bx bx-edit-alt me-1"></i> Edit
+                  </a>
+                  <a class="dropdown-item" href="javascript:void(0);" (click)="openDelete(r)">
+                    <i class="bx bx-trash me-1"></i> Delete
+                  </a>
+                </div>
+              </div>
+            </td>
+          </tr>
+  
+          <tr *ngIf="!rows().length">
+            <td colspan="6" class="text-center text-muted py-4">No referrals found.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <!-- Modals / Slide-ins -->
+  <app-pro-referral-create
+    *ngIf="showCreate()"
+    (close)="closeCreate()"
+    (created)="onCreated($event)">
+  </app-pro-referral-create>
+  
+  <app-pro-referral-update
+    *ngIf="editing()"
+    [referral]="editing()!"
+    (close)="closeEdit()"
+    (updated)="onUpdated($event)">
+  </app-pro-referral-update>
+  
+  <app-pro-referral-delete
+    *ngIf="deleting()"
+    [referral]="deleting()!"
+    (close)="closeDelete()"
+    (deleted)="onDeleted($event)">
+  </app-pro-referral-delete>
+  

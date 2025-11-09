@@ -1,0 +1,31 @@
+<div class="offcanvas offcanvas-end show" tabindex="-1" style="visibility: visible; width: 420px;">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title">Edit Permission</h5>
+      <button type="button" class="btn-close text-reset" (click)="close.emit()"></button>
+    </div>
+    <div class="offcanvas-body" *ngIf="permission">
+      <form [formGroup]="form" (ngSubmit)="update()">
+        <div class="mb-3">
+          <label class="form-label">Key</label>
+          <input class="form-control" [value]="permission.key" readonly />
+          <small class="text-muted">Key cannot be changed.</small>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Name</label>
+          <input class="form-control" formControlName="name" />
+          <div class="text-danger mt-1" *ngIf="touched('name') && form.controls.name.errors?.['required']">
+            Name is required.
+          </div>
+          <div class="text-danger mt-1" *ngIf="touched('name') && form.controls.name.errors?.['minlength']">
+            Name must be at least 3 characters.
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-end gap-2">
+          <button type="button" class="btn btn-outline-secondary" (click)="close.emit()">Cancel</button>
+          <button class="btn btn-primary" [disabled]="saving()">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>

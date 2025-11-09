@@ -1,0 +1,74 @@
+# ====================================
+# Angular 18 / Node.js Project
+# ====================================
+
+# compiled output
+/dist
+/tmp
+/out-tsc
+/.angular
+
+# dependencies
+/node_modules
+
+# IDE & Editor folders
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# environment files
+/src/environments/environment.ts
+/src/environments/environment.*.ts
+!.src/environments/environment.example.ts
+
+# build cache & logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+
+# Angular build cache
+.angular/cache/
+
+# local build artifacts
+/.sass-cache
+/.eslintcache
+/.nyc_output
+coverage/
+
+# misc
+.DS_Store
+Thumbs.db
+
+# OS specific
+ehthumbs.db
+Icon?
+desktop.ini
+
+# temporary files
+*.tmp
+*.temp
+*.bak
+*.log
+*.gz
+*.zip
+
+# optional: ignore generated typings
+typings/
+
+# dotenv files (if used)
+.env
+.env.*
+!.env.example
+
+# optional: ignore generated docs
+/docs
+
+# ================================
+# End of Angular 18 .gitignore
+# ================================

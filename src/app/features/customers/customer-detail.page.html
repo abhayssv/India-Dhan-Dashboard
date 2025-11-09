@@ -1,0 +1,189 @@
+<!-- Breadcrumb + Back -->
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a routerLink="/dashboard">Dashboard</a></li>
+        <li class="breadcrumb-item"><a routerLink="/customers">Customers</a></li>
+        <li class="breadcrumb-item active" aria-current="page">
+          {{ customer()?.full_name || 'Customer' }}
+        </li>
+      </ol>
+    </nav>
+  
+    <a class="btn btn-outline-secondary" routerLink="/customers">
+      <i class="bx bx-left-arrow-alt me-1"></i> Back
+    </a>
+  </div>
+  
+  <!-- Loading state -->
+  <div class="card mb-3" *ngIf="loading()">
+    <div class="card-body">
+      <span class="placeholder col-3"></span>
+      <div class="mt-3">
+        <span class="placeholder col-6"></span>
+        <span class="placeholder col-4 ms-2"></span>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Empty/Fallback -->
+  <div class="alert alert-warning" *ngIf="!loading() && !customer()">
+    Customer not found.
+  </div>
+  
+  <!-- Content -->
+  <div class="row" *ngIf="!loading() && !!customer()">
+    <div class="col-12 col-lg-8">
+      <div class="card mb-3">
+        <div class="card-header">
+          <h5 class="mb-0">Profile</h5>
+        </div>
+        <div class="card-body">
+          <div class="row gy-2">
+            <div class="col-sm-6">
+              <div class="text-muted small">Full name</div>
+              <div class="fw-medium">{{ short(customer()?.full_name) }}</div>
+            </div>
+            <div class="col-sm-6">
+              <div class="text-muted small">Email</div>
+              <div class="fw-medium">{{ short(customer()?.email) }}</div>
+            </div>
+            <div class="col-sm-6">
+              <div class="text-muted small">Phone</div>
+              <div class="fw-medium">{{ short(customer()?.phone) }}</div>
+            </div>
+            <div class="col-sm-6">
+              <div class="text-muted small">Referral Code</div>
+              <div class="fw-medium">{{ short(customer()?.referral_code) }}</div>
+            </div>
+            <!-- PAN -->
+            <div class="col-sm-6">
+              <div class="text-muted small">PAN</div>
+              <div class="fw-medium">{{ maskPan(customer()?.pan) }}</div>
+            </div>
+
+            <!-- Aadhaar -->
+            <div class="col-sm-6">
+              <div class="text-muted small">Aadhaar</div>
+              <div class="fw-medium">{{ maskAadhaar(customer()?.aadhaar) }}</div>
+            </div>
+
+            <!-- Gender -->
+            <div class="col-sm-6">
+              <div class="text-muted small">Gender</div>
+              <div class="fw-medium">{{ formatGender(customer()?.gender) }}</div>
+            </div>
+
+            <!-- State -->
+            <div class="col-sm-6">
+              <div class="text-muted small">State</div>
+              <div class="fw-medium">{{ short(customer()?.state) || '—' }}</div>
+            </div>
+
+            <!-- City -->
+            <div class="col-sm-6">
+              <div class="text-muted small">City</div>
+              <div class="fw-medium">{{ short(customer()?.city) || '—' }}</div>
+            </div>
+
+            <!-- Address (full width) -->
+            <div class="col-6">
+              <div class="text-muted small">Address</div>
+              <div class="fw-medium">{{ short(customer()?.address) || '—' }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Status card -->
+      <div class="card mb-3">
+        <div class="card-header">
+          <h5 class="mb-0">Status</h5>
+        </div>
+        <div class="card-body">
+          <div class="row gy-3">
+            <div class="col-sm-6">
+              <div class="text-muted small">Phone Verified</div>
+              <span class="badge" [class.bg-label-success]="customer()?.phone_verified"
+                                [class.bg-label-secondary]="!customer()?.phone_verified">
+                {{ customer()?.phone_verified ? 'Verified' : 'Not verified' }}
+              </span>
+              <div class="small text-muted mt-1" *ngIf="customer()?.phone_verified_at">
+                at {{ customer()?.phone_verified_at | date:'medium' }}
+              </div>
+            </div>
+  
+            <div class="col-sm-6">
+              <div class="text-muted small">Profile Completed</div>
+              <span class="badge" [class.bg-label-success]="customer()?.profile_completed"
+                                [class.bg-label-warning]="!customer()?.profile_completed">
+                {{ customer()?.profile_completed ? 'Completed' : 'Incomplete' }}
+              </span>
+            </div>
+  
+            <div class="col-sm-6">
+              <div class="text-muted small">Created (Profile)</div>
+              <div class="fw-medium">
+                {{ customer()?.created_at_profile ? (customer()?.created_at_profile | date:'medium') : '—' }}
+              </div>
+            </div>
+  
+            <div class="col-sm-6">
+              <div class="text-muted small">Created (Auth)</div>
+              <div class="fw-medium">
+                {{ customer()?.created_at_auth ? (customer()?.created_at_auth | date:'medium') : '—' }}
+              </div>
+            </div>
+  
+            <div class="col-sm-6">
+              <div class="text-muted small">Disabled</div>
+              <span class="badge" [class.bg-label-danger]="customer()?.disabled"
+                                [class.bg-label-success]="!customer()?.disabled">
+                {{ customer()?.disabled ? 'Disabled' : 'Active' }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Side summary -->
+    <div class="col-12 col-lg-4">
+      <div class="card mb-3">
+        <div class="card-header">
+          <h6 class="mb-0">Quick Summary</h6>
+        </div>
+        <div class="card-body">
+          <div class="mb-2 d-flex align-items-center">
+            <i class="bx bx-user-circle me-2"></i>
+            <span class="fw-medium">{{ short(customer()?.full_name) }}</span>
+          </div>
+          <div class="mb-2 d-flex align-items-center">
+            <i class="bx bx-mail-send me-2"></i>
+            <span class="fw-medium">{{ short(customer()?.email) }}</span>
+          </div>
+          <div class="mb-2 d-flex align-items-center">
+            <i class="bx bx-phone-call me-2"></i>
+            <span class="fw-medium">{{ short(customer()?.phone) }}</span>
+          </div>
+          <div class="mb-2 d-flex align-items-center">
+            <i class="bx bx-purchase-tag me-2"></i>
+            <span class="fw-medium">Ref: {{ short(customer()?.referral_code) }}</span>
+          </div>
+          <div class="mb-2 d-flex align-items-center">
+            <i class="bx bx-purchase-tag me-2"></i>
+            <span class="fw-medium">{{ formatCityState(customer()?.city, customer()?.state) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <ng-container *ngIf="customer() as c">
+    <app-customer-wallet class="mt-3" [userId]="c.id"></app-customer-wallet>
+    <app-customer-referrals class="mt-3" [userId]="c.id"></app-customer-referrals>
+  </ng-container>
+
+
+  

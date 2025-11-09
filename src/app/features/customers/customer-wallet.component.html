@@ -1,0 +1,86 @@
+<div class="card mb-3">
+    <div class="card-header d-flex align-items-center justify-content-between">
+      <h5 class="mb-0">Wallet</h5>
+      <div>
+        <span class="badge bg-label-primary me-2">
+          Balance: {{ balance() }}
+        </span>
+        <span class="badge bg-label-secondary">
+          Entries: {{ total() }}
+        </span>
+      </div>
+    </div>
+  
+    <div class="card-body p-0">
+      <div *ngIf="loading()" class="p-3">
+        <span class="placeholder col-3"></span>
+        <div class="mt-2">
+          <span class="placeholder col-8"></span>
+        </div>
+      </div>
+  
+      <div class="table-responsive text-nowrap" *ngIf="!loading()">
+        <table class="table mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Type</th>
+              <th>Coins</th>
+              <th>Reason</th>
+              <th>Meta</th>
+              <th>Created</th>
+            </tr>
+          </thead>
+          <tbody class="table-border-bottom-0">
+            <tr *ngFor="let e of entries()">
+              <td>
+                <span class="badge"
+                      [class.bg-label-success]="e.type === 'credit'"
+                      [class.bg-label-danger]="e.type === 'debit'">
+                  {{ e.type | titlecase }}
+                </span>
+              </td>
+              <td class="fw-medium">{{ e.coins }}</td>
+              <td>{{ e.reason }}</td>
+              <td>
+                <ng-container *ngIf="e.meta; else noMeta">
+                  <pre class="mb-0 small">{{ e.meta | json }}</pre>
+                </ng-container>
+                <ng-template #noMeta>—</ng-template>
+              </td>
+              <td><small class="text-muted">{{ e.created_at | date:'medium' }}</small></td>
+            </tr>
+            <tr *ngIf="!entries().length">
+              <td colspan="5" class="text-center text-muted py-4">No wallet entries.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+  
+      <!-- Pager -->
+      <div class="d-flex align-items-center justify-content-between p-3 border-top" *ngIf="!loading()">
+        <div class="d-flex align-items-center gap-2">
+          <span class="text-muted small">Rows per page</span>
+          <select class="form-select form-select-sm" style="width: auto"
+                  [value]="limit()"
+                  (change)="changePageSize(+$any($event.target).value)">
+            <option [value]="10">10</option>
+            <option [value]="20">20</option> 
+            <option [value]="50">50</option>
+          </select>
+        </div>
+  
+        <div class="d-flex align-items-center gap-2">
+          <button class="btn btn-sm btn-outline-secondary" [disabled]="!canPrev" (click)="prev()">
+            <i class="bx bx-chevron-left"></i>
+          </button>
+          <span class="small text-muted">
+            {{ (pageIndex + 1) }} / {{ Math.max(1, Math.ceil(total() / limit())) }}
+          </span>
+          <button class="btn btn-sm btn-outline-secondary" [disabled]="!canNext" (click)="next()">
+            <i class="bx bx-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  

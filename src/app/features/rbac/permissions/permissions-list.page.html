@@ -1,0 +1,81 @@
+
+  <!-- Breadcrumb + CTA -->
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a routerLink="/dashboard">Dashboard</a></li>
+        <li class="breadcrumb-item active" aria-current="page">RBAC</li>
+        <li class="breadcrumb-item active" aria-current="page">Permissions</li>
+      </ol>
+    </nav>
+    <button class="btn btn-primary" (click)="openCreate()">
+      <i class="bx bx-plus me-1"></i> Create Permission
+    </button>
+  </div>
+
+  <!-- Table -->
+  <div class="card">
+    <h5 class="card-header">Permissions</h5>
+    <div class="table-responsive text-nowrap">
+      <table class="table">
+        <thead class="table-light">
+          <tr>
+            <th>Key</th>
+            <th>Name</th>
+            <th>Created</th>
+            <th class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="table-border-bottom-0">
+          <tr *ngFor="let p of permissions()">
+            <td><i class="bx bx-shield-alt-2 me-2"></i><strong>{{ p.key }}</strong></td>
+            <td>{{ p.name }}</td>
+            <td><small class="text-muted">{{ p.created_at | date:'medium' }}</small></td>
+            <td class="text-end">
+              <div class="dropdown d-inline-block" (click)="$event.stopPropagation()">
+                <button type="button"
+                        class="btn p-0 dropdown-toggle hide-arrow"
+                        (click)="toggleRowMenu(p.id, $event)"
+                        [attr.aria-expanded]="isRowMenuOpen(p.id)">
+                  <i class="bx bx-dots-vertical-rounded"></i>
+                </button>
+                <div class="dropdown-menu dropdown-menu-end show" *ngIf="isRowMenuOpen(p.id)">
+                  <a class="dropdown-item" href="javascript:void(0);" (click)="openEdit(p)">
+                    <i class="bx bx-edit-alt me-1"></i> Edit
+                  </a>
+                  <a class="dropdown-item" href="javascript:void(0);" (click)="openDelete(p)">
+                    <i class="bx bx-trash me-1"></i> Delete
+                  </a>
+                </div>
+              </div>
+            </td>
+          </tr>
+
+          <tr *ngIf="!permissions().length">
+            <td colspan="4" class="text-center text-muted py-4">No permissions found.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modals / Slide-ins -->
+  <app-permission-create
+    *ngIf="showCreate()"
+    (close)="closeCreate()"
+    (created)="onCreated($event)">
+  </app-permission-create>
+
+  <app-permission-update
+    *ngIf="editingPermission()"
+    [permission]="editingPermission()!"
+    (close)="closeEdit()"
+    (updated)="onUpdated($event)">
+  </app-permission-update>
+
+  <app-permission-delete
+    *ngIf="deletingPermission()"
+    [permission]="deletingPermission()!"
+    (close)="closeDelete()"
+    (deleted)="onDeleted($event)">
+  </app-permission-delete>

@@ -1,0 +1,69 @@
+<div class="container-xxl">
+    <div class="authentication-wrapper authentication-basic container-p-y">
+      <div class="authentication-inner">
+        <div class="card">
+          <div class="card-body">
+            <!-- Brand -->
+            <div class="app-brand justify-content-center mb-3">
+                <a class="app-brand-link d-flex align-items-center gap-2 text-decoration-none" routerLink="/">
+                <img
+                    src="/sneat/assets/img/logo.png"
+                    alt="Indiadhan"
+                    class="brand-logo"
+                />
+                </a>
+            </div>
+            <h4 class="mb-2 text-center">Welcome back 👋</h4>
+  
+            <form [formGroup]="form" (ngSubmit)="onSubmit()">
+              <!-- Email -->
+              <div class="mb-3">
+                <label class="form-label" for="email">Email</label>
+                <input
+                  id="email"
+                  type="email"
+                  class="form-control"
+                  formControlName="email"
+                  [ngClass]="{ 'is-invalid': f.email.touched && f.email.invalid }"
+                  placeholder="you@example.com"
+                />
+                <div class="invalid-feedback" *ngIf="f.email.touched && f.email.errors">
+                  <span *ngIf="f.email.errors['required']">Email is required.</span>
+                  <span *ngIf="f.email.errors['email']">Please enter a valid email address.</span>
+                </div>
+              </div>
+  
+              <!-- Password -->
+              <div class="mb-3">
+                <label class="form-label" for="password">Password</label>
+                <input
+                  id="password"
+                  type="password"
+                  class="form-control"
+                  formControlName="password"
+                  [ngClass]="{ 'is-invalid': f.password.touched && f.password.invalid }"
+                  placeholder="••••••••"
+                />
+                <div class="invalid-feedback" *ngIf="f.password.touched && f.password.errors">
+                  <span *ngIf="f.password.errors['required']">Password is required.</span>
+                </div>
+              </div>
+  
+              <!-- Submit -->
+              <button class="btn rounded-pill btn-primary d-grid w-100" [disabled]="loading() || form.invalid">
+                <ng-container *ngIf="!loading(); else loggingIn">Sign in</ng-container>
+              </button>
+  
+              <ng-template #loggingIn>
+                <span>Signing in…</span>
+              </ng-template>
+  
+              <!-- Optional inline error (you already show toastr) -->
+              <!-- <div class="text-danger mt-2" *ngIf="error()">{{ error() }}</div> -->
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  

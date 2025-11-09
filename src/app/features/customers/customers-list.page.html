@@ -1,0 +1,161 @@
+<!-- src/app/features/customers/customers-list.page.html -->
+
+<!-- Breadcrumb + CTA -->
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a routerLink="/dashboard">Dashboard</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Customers</li>
+      </ol>
+    </nav>
+  </div>
+  
+  <!-- Filters -->
+  <div class="card mb-3">
+    <div class="card-body">
+      <form [formGroup]="form" (ngSubmit)="onApplyFilters()" class="row g-3">
+        <div class="col-12 col-md-3">
+          <label class="form-label">Search</label>
+          <input class="form-control" placeholder="Name / Email / Phone" formControlName="query" />
+        </div>
+  
+        <div class="col-12 col-sm-6 col-md-2">
+          <label class="form-label">Phone Verified</label>
+          <select class="form-select" formControlName="phone_verified">
+            <option value="all">All</option>
+            <option value="true">Verified</option>
+            <option value="false">Not Verified</option>
+          </select>
+        </div>
+  
+        <div class="col-12 col-sm-6 col-md-2">
+          <label class="form-label">Profile Completed</label>
+          <select class="form-select" formControlName="profile_completed">
+            <option value="all">All</option>
+            <option value="true">Completed</option>
+            <option value="false">Incomplete</option>
+          </select>
+        </div>
+  
+        <div class="col-12 col-sm-6 col-md-2">
+          <label class="form-label">Sort By</label>
+          <select class="form-select" formControlName="sort_by">
+            <option value="full_name">Full name</option>
+            <option value="created_at_profile">Profile created</option>
+            <option value="created_at_auth">Auth created</option>
+          </select>
+        </div>
+  
+        <div class="col-6 col-sm-3 col-md-1">
+          <label class="form-label">Dir</label>
+          <select class="form-select" formControlName="sort_dir">
+            <option value="asc">ASC</option>
+            <option value="desc">DESC</option>
+          </select>
+        </div>
+  
+        <div class="col-6 col-sm-3 col-md-1">
+          <label class="form-label">Limit</label>
+          <input type="number" class="form-control" formControlName="limit" min="1" step="1" />
+        </div>
+  
+        <div class="col-12 col-md-1 d-flex align-items-end gap-2">
+          <button class="btn btn-primary w-100" [disabled]="loading()">Apply</button>
+        </div>
+        <div class="col-12 col-md-1 d-flex align-items-end">
+          <button type="button" class="btn btn-light w-100" (click)="onClearFilters()">Clear</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <!-- Table -->
+  <div class="card">
+    <h5 class="card-header d-flex justify-content-between">
+      <span>Customers</span>
+      <small class="text-muted">Total: {{ total() }}</small>
+    </h5>
+  
+    <div class="table-responsive text-nowrap">
+      <table class="table">
+        <thead class="table-light">
+          <tr>
+            <th>Name</th>
+            <th>Email / Phone</th>
+            <th>Referral</th>
+            <th>Phone Verified</th>
+            <th>Profile Completed</th>
+            <th>Created (Profile)</th>
+            <th class="text-end">Actions</th>
+          </tr>
+        </thead>
+  
+        <tbody class="table-border-bottom-0">
+          <tr *ngFor="let c of customers()">
+            <td>
+              <i class="bx bx-user me-2"></i>
+              <a [routerLink]="['/customers', c.id]" class="fw-medium">
+                <strong>{{ c.full_name || '-' }}</strong>
+              </a>
+              <div *ngIf="c.disabled" class="badge bg-label-warning ms-1">Disabled</div>
+            </td>
+            <td>
+              <div>{{ c.email || '-' }}</div>
+              <small class="text-muted">{{ c.phone || '-' }}</small>
+            </td>
+            <td>{{ c.referral_code || '-' }}</td>
+            <td>
+              <span class="badge" [class.bg-label-success]="c.phone_verified" [class.bg-label-secondary]="!c.phone_verified">
+                {{ c.phone_verified ? 'Yes' : 'No' }}
+              </span>
+            </td>
+            <td>
+              <span class="badge" [class.bg-label-success]="c.profile_completed" [class.bg-label-secondary]="!c.profile_completed">
+                {{ c.profile_completed ? 'Yes' : 'No' }}
+              </span>
+            </td>
+            <td><small class="text-muted">{{ c.created_at_profile | date:'medium' }}</small></td>
+            <td class="text-end">
+              <div class="dropdown d-inline-block" (click)="$event.stopPropagation()">
+                <button type="button"
+                        class="btn p-0 dropdown-toggle hide-arrow"
+                        (click)="toggleRowMenu(c.id, $event)"
+                        [attr.aria-expanded]="isRowMenuOpen(c.id)">
+                  <i class="bx bx-dots-vertical-rounded"></i>
+                </button>
+                <div class="dropdown-menu dropdown-menu-end show" *ngIf="isRowMenuOpen(c.id)">
+                  <a class="dropdown-item" [routerLink]="['/customers', c.id]">
+                    <i class="bx bx-show-alt me-1"></i> View
+                  </a>
+                  <!-- Placeholder actions; wire up later if you add APIs -->
+                  <!--
+                  <a class="dropdown-item" href="javascript:void(0)">
+                    <i class="bx bx-toggle-left me-1"></i> Disable/Enable
+                  </a>
+                  -->
+                </div>
+              </div>
+            </td>
+          </tr>
+  
+          <tr *ngIf="!customers().length && !loading()">
+            <td colspan="7" class="text-center text-muted py-4">No customers found.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  
+    <!-- Pager -->
+    <div class="card-footer d-flex justify-content-between align-items-center">
+      <button class="btn btn-light" [disabled]="!hasPrev() || loading()" (click)="prevPage()">
+        <i class="bx bx-chevron-left"></i> Prev
+      </button>
+      <div class="text-muted">
+        Showing {{ offset() + 1 }} - {{ Math.min(offset() + limit(), total()) }} of {{ total() }}
+      </div>
+      <button class="btn btn-light" [disabled]="!hasNext() || loading()" (click)="nextPage()">
+        Next <i class="bx bx-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+  
