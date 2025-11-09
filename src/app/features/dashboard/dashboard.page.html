@@ -1,0 +1,174 @@
+<!-- Breadcrumb -->
+<nav aria-label="breadcrumb" class="mb-3">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+  </ol>
+</nav>
+
+<!-- Cards -->
+<div class="row g-3 mb-3" *ngIf="summary() as s">
+  <div class="col-12 col-sm-6 col-lg-3">
+    <div class="card h-100">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <h6 class="mb-1">Total Customers</h6>
+          <i class="bx bx-group fs-4 text-primary"></i>
+        </div>
+        <h3 class="my-2">{{ s.customers_total | number }}</h3>
+        <small class="text-muted">New (24h): {{ s.new_customers_24h || 0 }}</small>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-sm-6 col-lg-3">
+    <div class="card h-100">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <h6 class="mb-1">Phone Verified</h6>
+          <i class="bx bx-shield-quarter fs-4 text-success"></i>
+        </div>
+        <h3 class="my-2">{{ s.customers_verified | number }}</h3>
+        <small class="text-muted">{{ pct(s.customers_verified, s.customers_total) }}% of users</small>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-sm-6 col-lg-3">
+    <div class="card h-100">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <h6 class="mb-1">Profiles Completed</h6>
+          <i class="bx bx-check-circle fs-4 text-info"></i>
+        </div>
+        <h3 class="my-2">{{ s.customers_profile_completed | number }}</h3>
+        <small class="text-muted">{{ pct(s.customers_profile_completed, s.customers_total) }}% of users</small>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-sm-6 col-lg-3">
+    <div class="card h-100">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between">
+          <h6 class="mb-1">RBAC</h6>
+          <i class="bx bx-lock-open-alt fs-4 text-warning"></i>
+        </div>
+        <div class="d-flex gap-3 my-2">
+          <div>
+            <div class="fw-semibold">{{ s.roles_total }}</div>
+            <small class="text-muted">Roles</small>
+          </div>
+          <div>
+            <div class="fw-semibold">{{ s.permissions_total }}</div>
+            <small class="text-muted">Permissions</small>
+          </div>
+        </div>
+        <small class="text-muted">Admin users: {{ s.admin_users_total }}</small>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loading skeleton -->
+<div *ngIf="loading()" class="row g-3 mb-3">
+  <div class="col-12 col-sm-6 col-lg-3" *ngFor="let i of [1,2,3,4]">
+    <div class="card h-100">
+      <div class="card-body">
+        <div class="placeholder-wave">
+          <span class="placeholder col-6 mb-2"></span>
+          <span class="placeholder col-8 mb-2"></span>
+          <span class="placeholder col-4"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Tables row -->
+<div class="row g-3">
+  <div class="col-12 col-xl-6">
+    <div class="card h-100">
+      <h5 class="card-header">Recent Customers</h5>
+      <div class="table-responsive text-nowrap">
+        <table class="table mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Name/Email</th>
+              <th>Phone</th>
+              <th>Joined</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let c of recent()">
+              <td>
+                <strong>{{ c.full_name || '-' }}</strong><br>
+                <small class="text-muted">{{ c.email }}</small>
+              </td>
+              <td>{{ c.phone || '-' }}</td>
+              <td><small class="text-muted">{{ c.created_at_profile | date:'medium' }}</small></td>
+            </tr>
+            <tr *ngIf="!recent().length && !loading()">
+              <td colspan="3" class="text-center text-muted py-4">No data</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right side reserved for future (e.g., Top Referrers)
+       Using Option B we don't have an API for it yet, so keep a placeholder -->
+       <div class="col-12 col-xl-6">
+        <div class="card h-100">
+          <h5 class="card-header d-flex align-items-center justify-content-between">
+            <span>Top Referrers</span>
+            <small class="text-muted">Sorted by reward</small>
+          </h5>
+      
+          <div class="table-responsive text-nowrap">
+            <table class="table mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th style="width: 56px;">#</th>
+                  <th>Name / Email</th>
+                  <th>Phone</th>
+                  <th class="text-end">Completed</th>
+                  <th class="text-end">Reward</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let r of topReferrers(); let i = index">
+                  <td>
+                    <span class="badge bg-label-primary">{{ i + 1 }}</span>
+                  </td>
+                  <td>
+                    <div class="fw-semibold">{{ r.referrer.full_name || '-' }}</div>
+                    <small class="text-muted">{{ r.referrer.email || '' }}</small><br>
+                    <small class="badge bg-label-secondary">Code: {{ r.referrer.referral_code }}</small>
+                  </td>
+                  <td>{{ r.referrer.phone || '-' }}</td>
+                  <td class="text-end">
+                    {{ r.metrics.completed_count }} / {{ r.metrics.total_count }}
+                  </td>
+                  <td class="text-end">
+                    <i class="bx bx-coin me-1"></i>{{ r.metrics.reward_sum | number }}
+                  </td>
+                </tr>
+      
+                <tr *ngIf="!topReferrers().length && !loading()">
+                  <td colspan="5" class="text-center text-muted py-4">No data</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+      
+          <!-- Skeleton while loading -->
+          <div *ngIf="loading()" class="p-4">
+            <div class="placeholder-wave" *ngFor="let _ of [1,2,3,4,5]">
+              <span class="placeholder col-12 mb-2"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+</div>

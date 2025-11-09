@@ -1,0 +1,36 @@
+<div class="offcanvas offcanvas-end show" tabindex="-1" style="visibility: visible; width: 420px;">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title">Create Permission</h5>
+      <button type="button" class="btn-close text-reset" (click)="close.emit()"></button>
+    </div>
+    <div class="offcanvas-body">
+      <form [formGroup]="form" (ngSubmit)="create()">
+        <div class="mb-3">
+          <label class="form-label">Key</label>
+          <input class="form-control" formControlName="key" placeholder="e.g. users.read" />
+          <div class="text-danger mt-1" *ngIf="touched('key') && form.controls.key.errors?.['required']">
+            Key is required.
+          </div>
+          <div class="text-danger mt-1" *ngIf="touched('key') && form.controls.key.errors?.['pattern']">
+            Use letters, dots and dashes only (e.g. users.read).
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Name</label>
+          <input class="form-control" formControlName="name" placeholder="e.g. List/read users" />
+          <div class="text-danger mt-1" *ngIf="touched('name') && form.controls.name.errors?.['required']">
+            Name is required.
+          </div>
+          <div class="text-danger mt-1" *ngIf="touched('name') && form.controls.name.errors?.['minlength']">
+            Name must be at least 3 characters.
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-end gap-2">
+          <button type="button" class="btn btn-outline-secondary" (click)="close.emit()">Cancel</button>
+          <button class="btn btn-primary" [disabled]="saving()">Create</button>
+        </div>
+      </form>
+    </div>
+  </div>

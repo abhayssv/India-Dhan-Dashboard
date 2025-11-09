@@ -1,0 +1,87 @@
+<!-- Breadcrumb + CTA (mirrors Permissions page) -->
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb mb-0">
+      <li class="breadcrumb-item"><a routerLink="/dashboard">Dashboard</a></li>
+      <li class="breadcrumb-item active" aria-current="page">RBAC</li>
+      <li class="breadcrumb-item active" aria-current="page">Roles</li>
+    </ol>
+  </nav>
+
+  <button class="btn btn-primary" (click)="openCreate()">
+    <i class="bx bx-plus me-1"></i> Create Role
+  </button>
+</div>
+
+<!-- Table (Sneat “Light Table head” style) -->
+<div class="card">
+  <h5 class="card-header">Roles</h5>
+  <div class="table-responsive text-nowrap">
+    <table class="table">
+      <thead class="table-light">
+        <tr>
+          <th>Key</th>
+          <th>Name</th>
+          <th>Admin?</th>
+          <th>Created</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="table-border-bottom-0">
+        <tr *ngFor="let r of roles()">
+          <td><i class="bx bx-key me-2"></i><strong>{{ r.key }}</strong></td>
+          <td>{{ r.name }}</td>
+          <td>
+            <span class="badge" [class.bg-label-success]="r.is_admin" [class.bg-label-secondary]="!r.is_admin">
+              {{ r.is_admin ? 'YES' : 'NO' }}
+            </span>
+          </td>
+          <td><small class="text-muted">{{ r.created_at | date:'medium' }}</small></td>
+          <td class="text-end">
+            <div class="dropdown d-inline-block" (click)="$event.stopPropagation()">
+              <button type="button"
+                      class="btn p-0 dropdown-toggle hide-arrow"
+                      (click)="toggleRowMenu(r.id, $event)"
+                      [attr.aria-expanded]="isRowMenuOpen(r.id)">
+                <i class="bx bx-dots-vertical-rounded"></i>
+              </button>
+              <div class="dropdown-menu dropdown-menu-end show" *ngIf="isRowMenuOpen(r.id)">
+                <a class="dropdown-item" href="javascript:void(0);" (click)="openEdit(r)">
+                  <i class="bx bx-edit-alt me-1"></i> Edit
+                </a>
+                <a class="dropdown-item text-danger" href="javascript:void(0);" (click)="openDelete(r)">
+                  <i class="bx bx-trash me-1"></i> Delete
+                </a>
+              </div>
+            </div>
+          </td>
+        </tr>
+
+        <tr *ngIf="!roles().length && !loading()">
+          <td colspan="5" class="text-center text-muted py-4">No roles found.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Slide-ins / Modals (same pattern as Permissions) -->
+<app-role-create
+  *ngIf="showCreate()"
+  (close)="closeCreate()"
+  (created)="onCreated()">
+</app-role-create>
+
+<app-role-update
+  *ngIf="editingRole()"
+  [role]="editingRole()!"
+  (close)="closeEdit()"
+  (updated)="onUpdated()">
+</app-role-update>
+
+<app-role-delete
+  *ngIf="deletingRole()"
+  [role]="deletingRole()!"
+  (close)="closeDelete()"
+  (deleted)="onDeleted()">
+</app-role-delete>

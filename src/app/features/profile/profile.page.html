@@ -1,0 +1,78 @@
+<!-- src/app/features/profile/profile.page.html -->
+<div class="container-xxl">
+    <div class="row">
+      <div class="col-12 col-lg-6">
+        <div class="card mb-4">
+          <div class="card-body">
+            <h5 class="card-title mb-3">My Profile</h5>
+  
+            <form [formGroup]="form" (ngSubmit)="saveProfile()">
+              <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input class="form-control" formControlName="email" [readOnly]="true" />
+              </div>
+  
+              <div class="mb-3">
+                <label class="form-label">Full name</label>
+                <input class="form-control" formControlName="full_name" placeholder="Enter full name" />
+              </div>
+  
+              <div class="mb-3">
+                <label class="form-label">Avatar URL</label>
+                <input class="form-control" formControlName="avatar_url" placeholder="https://..." />
+              </div>
+  
+              <button class="btn btn-primary" type="submit" [disabled]="saving() || loading()">
+                <ng-container *ngIf="!saving(); else savingTpl">Save changes</ng-container>
+              </button>
+              <ng-template #savingTpl>Saving…</ng-template>
+            </form>
+          </div>
+        </div>
+      </div>
+  
+      <div class="col-12 col-lg-6">
+        <div class="card mb-4">
+          <div class="card-body">
+            <h5 class="card-title mb-3">Change Password</h5>
+  
+            <form [formGroup]="passForm" (ngSubmit)="changePassword()">
+              <div class="mb-3">
+                <label class="form-label">Current password</label>
+                <input class="form-control" type="password" formControlName="current_password" />
+                <div
+                  class="text-danger mt-1"
+                  *ngIf="passForm.controls.current_password.touched && passForm.controls.current_password.invalid"
+                >
+                  Current password is required.
+                </div>
+              </div>
+  
+              <div class="mb-3">
+                <label class="form-label">New password</label>
+                <input class="form-control" type="password" formControlName="new_password" />
+                <div
+                  class="text-danger mt-1"
+                  *ngIf="passForm.controls.new_password.touched && passForm.controls.new_password.errors?.['required']"
+                >
+                  New password is required.
+                </div>
+                <div
+                  class="text-danger mt-1"
+                  *ngIf="passForm.controls.new_password.touched && passForm.controls.new_password.errors?.['minlength']"
+                >
+                  New password must be at least 6 characters.
+                </div>
+              </div>
+  
+              <button class="btn btn-warning" type="submit" [disabled]="changing()">
+                <ng-container *ngIf="!changing(); else changingTpl">Update password</ng-container>
+              </button>
+              <ng-template #changingTpl>Updating…</ng-template>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  

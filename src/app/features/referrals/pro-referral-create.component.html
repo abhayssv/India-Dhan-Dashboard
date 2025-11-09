@@ -1,0 +1,57 @@
+<div class="offcanvas offcanvas-end show" tabindex="-1" style="visibility: visible; width: 480px;">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title">Create Pro Referral</h5>
+      <button type="button" class="btn-close text-reset" (click)="close.emit()"></button>
+    </div>
+    <div class="offcanvas-body">
+      <form [formGroup]="form" (ngSubmit)="create()">
+        <div class="mb-3">
+          <label class="form-label">Referral Code</label>
+          <input class="form-control" formControlName="referral_code" placeholder="e.g. A0462294A4" />
+          <div class="text-danger mt-1" *ngIf="touched('referral_code') && form.controls.referral_code.errors?.['required']">
+            Referral code is required.
+          </div>
+          <div class="text-danger mt-1" *ngIf="touched('referral_code') && form.controls.referral_code.errors?.['pattern']">
+            Uppercase letters, numbers and dashes only.
+          </div>
+        </div>
+  
+        <div class="row g-3">
+          <div class="col-6">
+            <label class="form-label">Bonus Referrer (₹)</label>
+            <input class="form-control" type="number" formControlName="bonus_referrer" />
+          </div>
+          <div class="col-6">
+            <label class="form-label">Bonus Referred (₹)</label>
+            <input class="form-control" type="number" formControlName="bonus_referred" />
+          </div>
+        </div>
+  
+        <div class="row g-3 mt-1">
+          <div class="col-6">
+            <label class="form-label">Starts At</label>
+            <input class="form-control" type="datetime-local" formControlName="starts_at" />
+          </div>
+          <div class="col-6">
+            <label class="form-label">Ends At</label>
+            <input class="form-control" type="datetime-local" formControlName="ends_at" />
+          </div>
+        </div>
+  
+        <div class="form-check form-switch mt-3">
+          <input class="form-check-input" type="checkbox" id="premiumSwitch" formControlName="is_premium">
+          <label class="form-check-label" for="premiumSwitch">Premium</label>
+        </div>
+        <div class="form-check form-switch mt-2">
+          <input class="form-check-input" type="checkbox" id="activeSwitch" formControlName="active">
+          <label class="form-check-label" for="activeSwitch">Active</label>
+        </div>
+  
+        <div class="d-flex justify-content-end gap-2 mt-4">
+          <button type="button" class="btn btn-outline-secondary" (click)="close.emit()">Cancel</button>
+          <button class="btn btn-primary" [disabled]="saving()">Create</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  

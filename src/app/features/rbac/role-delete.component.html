@@ -1,0 +1,21 @@
+<div class="offcanvas offcanvas-end show" tabindex="-1" style="visibility: visible; width: 420px;">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title">Delete Role</h5>
+    <button type="button" class="btn-close text-reset" (click)="close.emit()"></button>
+  </div>
+  <div class="offcanvas-body">
+    <p>
+      Are you sure you want to delete role
+      <strong>{{ role.name }}</strong> ({{ role.key }})?
+    </p>
+
+    <div class="alert alert-warning">
+      This action cannot be undone.
+    </div>
+
+    <div class="d-flex justify-content-end gap-2">
+      <button class="btn btn-outline-secondary" (click)="close.emit()">Cancel</button>
+      <button class="btn btn-danger" (click)="confirm()" [disabled]="deleting">Delete</button>
+    </div>
+  </div>
+</div>

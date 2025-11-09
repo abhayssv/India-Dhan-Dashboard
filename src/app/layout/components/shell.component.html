@@ -1,0 +1,212 @@
+<!-- Sneat wrapper classes -->
+<div class="layout-wrapper layout-content-navbar"
+     [class.layout-menu-fixed]="true"
+     [class.menu-open]="menuOpen()">
+  <div class="layout-container">
+
+    <!-- Sidebar -->
+    <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+      <div class="app-brand demo">
+        <a routerLink="/dashboard" class="app-brand-link">
+          <span class="app-brand-logo demo"></span>
+          <span class="app-brand-text demo menu-text fw-bolder ms-2"><img height="50px" src="assets/sneat/assets/img/logo.png" alt=""></span>
+        </a>
+
+        <a class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none"
+           href="javascript:void(0);" (click)="toggleMenu()">
+          <i class="bx bx-chevron-left bx-sm align-middle"></i>
+        </a>
+
+        <!-- NEW: explicit Close button (mobile only) -->
+        <button type="button"
+            class="btn btn-icon btn-outline-secondary d-xl-none menu-close-btn"
+            aria-label="Close menu"
+            (click)="closeMenu()">
+        <i class="bx bx-x fs-4"></i>
+        </button>
+      </div>
+
+      <div class="menu-inner-shadow"></div>
+
+      <ul class="menu-inner py-1">
+        <!-- Dashboard -->
+        <li class="menu-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <a class="menu-link" routerLink="/dashboard" (click)="closeMenu()">
+            <i class="menu-icon tf-icons bx bx-home-circle"></i>
+            <div>Dashboard</div>
+          </a>
+        </li>
+
+        <!-- Admin Users -->
+        <li class="menu-item" *ngIf="auth.canStrict('users.read')"  routerLinkActive="active">
+          <a class="menu-link" routerLink="/admin-users" (click)="closeMenu()">
+            <i class="menu-icon tf-icons bx bx-user"></i>
+            <div>Admin Users</div>
+          </a>
+        </li>
+
+        <!-- RBAC submenu -->
+        <li class="menu-item" *ngIf="auth.canStrict('rbac.manage')" [class.open]="isSectionOpen('rbac')">
+          <a class="menu-link menu-toggle"
+             href="javascript:void(0);"
+             (click)="toggleSection('rbac')"
+             [attr.aria-expanded]="isSectionOpen('rbac')">
+            <i class="menu-icon tf-icons bx bx-lock-open-alt"></i>
+            <div>RBAC</div>
+          </a>
+          <ul class="menu-sub">
+            <li class="menu-item" routerLinkActive="active">
+              <a class="menu-link" routerLink="/rbac/roles" (click)="closeMenu()">
+                <div>Roles</div>
+              </a>
+            </li>
+          </ul>
+          <ul class="menu-sub">
+            <li class="menu-item" routerLinkActive="active">
+              <a class="menu-link" routerLink="/rbac/permissions" (click)="closeMenu()">
+                <div>Permissions</div>
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <!-- Customers -->
+        <li class="menu-item" *ngIf="auth.canStrict('customers.read')" routerLinkActive="active">
+          <a class="menu-link" routerLink="/customers" (click)="closeMenu()">
+            <i class="menu-icon tf-icons bx bx-credit-card"></i>
+            <div>Customers</div>
+          </a>
+        </li>
+
+        <!-- Pro Referrals -->
+        <li class="menu-item" *ngIf="auth.canStrict('proreferral.read')" routerLinkActive="active">
+          <a class="menu-link" routerLink="/pro-referral" (click)="closeMenu()">
+            <i class="menu-icon tf-icons bx bx-credit-card"></i>
+            <div>Pro Referrals</div>
+          </a>
+        </li>
+
+        <!-- Loans -->
+        <li class="menu-item" *ngIf="auth.canStrict('nbfc.read')" routerLinkActive="active">
+          <a class="menu-link" routerLink="/loans" (click)="closeMenu()">
+            <i class="menu-icon tf-icons bx bx-credit-card"></i>
+            <div>Loans</div>
+          </a>
+        </li>
+      </ul>
+    </aside>
+    <!-- /Sidebar -->
+
+    <!-- Page area -->
+    <div class="layout-page">
+
+      <!-- Top navbar -->
+      <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
+           id="layout-navbar">
+        <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
+          <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)" (click)="toggleMenu()">
+            <i class="bx bx-menu bx-sm"></i>
+          </a>
+        </div>
+
+        <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
+          <!-- Search -->
+          <div class="navbar-nav align-items-center">
+            <div class="nav-item d-flex align-items-center">
+              <i class="bx bx-search fs-4 lh-0"></i>
+              <input type="text" class="form-control border-0 shadow-none" placeholder="Search..." />
+            </div>
+          </div>
+
+          <!-- Profile dropdown (pure Angular) -->
+          <ul class="navbar-nav flex-row align-items-center ms-auto">
+            <li class="nav-item dropdown" [class.show]="userMenuOpen()">
+                <a class="nav-link dropdown-toggle hide-arrow"
+                   href="#"
+                   id="userMenu"
+                   role="button"
+                   [attr.aria-expanded]="userMenuOpen()"
+                   (click)="toggleUserMenu($event)">
+                    <div class="avatar avatar-online">
+                        <span
+                            class="d-inline-flex rounded-circle bg-primary text-white fw-bold"
+                            style="width:40px;height:40px;align-items:center;justify-content:center;font-size:14px;"
+                            aria-label="User initials avatar"
+                        >
+                        {{ userInitials() }}
+                        </span>
+                    </div>
+                </a>
+              
+                <ul class="dropdown-menu dropdown-menu-end"
+                    [class.show]="userMenuOpen()"
+                    aria-labelledby="userMenu"
+                        (click)="$event.stopPropagation()">
+                    <li class="dropdown-header text-center">
+                    <div class="fw-semibold">{{displayName()}}</div>
+                    <small class="text-muted">Administrator</small>
+                    </li>
+                    <li><hr class="dropdown-divider" /></li>
+
+                    <li>
+                    <a class="dropdown-item" routerLink="/profile" (click)="closeUserMenu()">
+                        <i class="bx bx-user me-2"></i>
+                        <span class="align-middle">My Profile</span>
+                    </a>
+                    </li>
+
+                    <li>
+                    <a class="dropdown-item" routerLink="/settings" (click)="closeUserMenu()">
+                        <i class="bx bx-cog me-2"></i>
+                        <span class="align-middle">Settings</span>
+                    </a>
+                    </li>
+
+                    <!-- <li>
+                    <a class="dropdown-item" routerLink="/billing" (click)="closeUserMenu()">
+                        <span class="d-flex align-items-center">
+                        <i class="bx bx-credit-card me-2"></i>
+                        <span class="align-middle flex-grow-1">Billing</span>
+                        <span class="badge bg-danger ms-2">4</span>
+                        </span>
+                    </a>
+                    </li> -->
+
+                    <li><hr class="dropdown-divider" /></li>
+
+                    <li>
+                        <a class="dropdown-item" href="#"
+                            (click)="$event.preventDefault(); closeUserMenu(); logout($event)">
+                            <i class="bx bx-power-off me-2"></i>
+                            <span class="align-middle">Log Out</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+          </ul>
+          <!-- /Profile dropdown -->
+        </div>
+      </nav>
+
+      <!-- Routed content -->
+      <div class="content-wrapper">
+        <div class="container-xxl flex-grow-1 container-p-y">
+          <router-outlet></router-outlet>
+        </div>
+
+        <footer class="content-footer footer bg-footer-theme">
+          <div class="container-xxl d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
+            <div>© {{ currentYear }} Vizzve Financials</div>
+            <div>
+              <a class="footer-link me-4" href="https://themeselection.com/license/" target="_blank">License</a>
+            </div>
+          </div>
+        </footer>
+        <div class="content-backdrop fade"></div>
+      </div>
+    </div>
+
+    <!-- Mobile overlay (click to close) -->
+    <div class="layout-overlay layout-menu-toggle" (click)="closeMenu()"></div>
+  </div>
+</div>
