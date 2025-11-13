@@ -54,9 +54,30 @@ export const routes: Routes = [
         loadComponent: () =>import('./features/referrals/pro-referral-list.page').then(m => m.ProReferralListPage),
       },
       {
+        path: 'influencers',
+        canActivate:[PermissionGuard], data: { perm: 'influencer.read' },
+        loadComponent: () =>import('./features/influencers/influencers-list.page').then(m => m.InfluencersListPage),
+      },
+      {
+        path: 'influencers/:id',
+        canActivate: [PermissionGuard], data: { perm: 'influencer.read' },
+        loadComponent: () =>
+          import('./features/influencers/influencer-detail.page').then(m => m.InfluencerDetailPage),
+      },
+      {
         path: '403',
         loadComponent: () =>
           import('./shared/pages/access-denied.component').then(m => m.AccessDeniedComponent)
+      },
+      {
+        path: 'loans',
+        canActivate: [PermissionGuard], data: { perm: 'loans.read' },
+        loadComponent: () => import('./features/loans/loans-list.page').then(m => m.LoansListPage),
+      },
+      {
+        path: 'loans/:loan_id/:user_id',
+        canActivate: [PermissionGuard], data: { perm: 'loans.read' },
+        loadComponent: () => import('./features/loans/loan-detail.page').then(m => m.LoanDetailPage),
       },
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
       

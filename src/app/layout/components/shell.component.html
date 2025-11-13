@@ -86,8 +86,16 @@
           </a>
         </li>
 
+        <!-- Influencers -->
+        <li class="menu-item" *ngIf="auth.canStrict('influencer.read')" routerLinkActive="active">
+          <a class="menu-link" routerLink="/influencers" (click)="closeMenu()">
+            <i class="menu-icon tf-icons bx bx-credit-card"></i>
+            <div>Influencers</div>
+          </a>
+        </li>
+
         <!-- Loans -->
-        <li class="menu-item" *ngIf="auth.canStrict('nbfc.read')" routerLinkActive="active">
+        <li class="menu-item" *ngIf="auth.canStrict('loans.read')" routerLinkActive="active">
           <a class="menu-link" routerLink="/loans" (click)="closeMenu()">
             <i class="menu-icon tf-icons bx bx-credit-card"></i>
             <div>Loans</div>

@@ -1,0 +1,41 @@
+<!-- Breadcrumb + Back -->
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a routerLink="/dashboard">Dashboard</a></li>
+        <li class="breadcrumb-item"><a routerLink="/loans">Loans</a></li>
+        <li class="breadcrumb-item active" aria-current="page">
+          {{ data()?.username || 'Loan' }}
+        </li>
+      </ol>
+    </nav>
+  
+    <a class="btn btn-outline-secondary" routerLink="/loans">
+      <i class="bx bx-left-arrow-alt me-1"></i> Back
+    </a>
+  </div>
+  
+  <!-- Loading -->
+  <div class="card mb-3" *ngIf="loading()">
+    <div class="card-body">Loading…</div>
+  </div>
+  
+  <!-- Not found -->
+  <div class="alert alert-warning" *ngIf="!loading() && !data()">Loan not found.</div>
+  
+  <!-- Content -->
+  <div class="card" *ngIf="!loading() && data() as d">
+    <div class="card-header">
+      <h5 class="mb-0">Loan Details ({{ d.loan_status }})</h5>
+    </div>
+  
+    <div class="card-body">
+      <div class="row gy-3">
+        <div class="col-sm-6" *ngFor="let r of rows()">
+          <div class="text-muted small">{{ r.label }}</div>
+          <div class="fw-medium">{{ r.value }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
