@@ -1,0 +1,180 @@
+<!-- Breadcrumb + CTA -->
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a routerLink="/dashboard">Dashboard</a></li>
+        <li class="breadcrumb-item active">Influencers</li>
+      </ol>
+    </nav>
+  
+    <button class="btn btn-primary"
+          *ngIf="auth.canStrict('influencer.write')"
+          (click)="openCreate()">
+    <i class="bx bx-plus me-1"></i> Add Influencer
+  </button>
+  </div>
+  
+  <!-- Filters -->
+  <div class="card mb-3">
+    <div class="card-body">
+      <div class="row g-3 align-items-end">
+        <div class="col-md-4">
+          <label class="form-label">Search</label>
+          <input class="form-control"
+                [ngModel]="query()"
+                (ngModelChange)="query.set($event)"
+                placeholder="name, email, phone, code" 
+            />
+        </div>
+        <div class="col-md-2">
+        <label class="form-label">Active (Pro)</label>
+        <select class="form-select"
+                [ngModel]="active()"
+                (ngModelChange)="active.set($event)">
+            <option [ngValue]="null">Any</option>
+            <option [ngValue]="true">Active</option>
+            <option [ngValue]="false">Inactive</option>
+        </select>
+        </div>
+        
+        <div class="col-md-2">
+        <label class="form-label">Phone Verified</label>
+        <select class="form-select"
+                [ngModel]="phoneVerified()"
+                (ngModelChange)="phoneVerified.set($event)">
+            <option [ngValue]="null">Any</option>
+            <option [ngValue]="true">Yes</option>
+            <option [ngValue]="false">No</option>
+        </select>
+        </div>
+        
+        <div class="col-md-2">
+          <label class="form-label">Range (From)</label>
+          <div class="d-flex gap-2">
+            <input class="form-control" type="datetime-local" [ngModel]="startsFrom()" (ngModelChange)="startsFrom.set($event)" />
+          </div>
+        </div>
+
+        <div class="col-md-2">
+            <label class="form-label">Range (To)</label>
+            <div class="d-flex gap-2">
+              <input class="form-control" type="datetime-local" [ngModel]="endsTo()" (ngModelChange)="endsTo.set($event)" />
+            </div>
+        </div>
+  
+        <div class="col-md-2">
+          <label class="form-label">Sort By</label>
+          <select class="form-select" [ngModel]="sortBy()" (ngModelChange)="sortBy.set($event)">
+            <option value="referrals_completed">Completed</option>
+            <option value="referrals_total">Total</option>
+            <option value="coins_earned">Coins</option>
+            <option value="profile_created_at">Joined</option>
+          </select>
+        </div>
+
+        <div class="col-md-2">
+            <label class="form-label">Profile Completed</label>
+            <select class="form-select"
+                    [ngModel]="profileCompleted()"
+                    (ngModelChange)="profileCompleted.set($event)">
+              <option [ngValue]="null">Any</option>
+              <option [ngValue]="true">Yes</option>
+              <option [ngValue]="false">No</option>
+            </select>
+          </div>
+
+        <div class="col-md-2">
+          <label class="form-label">Direction</label>
+          <select class="form-select" [ngModel]="sortDir()" (ngModelChange)="sortDir.set($event)">
+            <option value="desc">Desc</option>
+            <option value="asc">Asc</option>
+          </select>
+        </div>
+  
+        <div class="col-md-2">
+          <label class="form-label">Page Size</label>
+          <select class="form-select" [ngModel]="limit()" (ngModelChange)="limit.set(+($event))">
+            <option [ngValue]="10">10</option>
+            <option [ngValue]="20">20</option>
+            <option [ngValue]="50">50</option>
+          </select>
+        </div>
+  
+        <div class="col-md-4 d-flex gap-2">
+          <button class="btn btn-outline-secondary" (click)="resetToFirst(); load()">Reset</button>
+          <button class="btn btn-primary" (click)="resetToFirst(); load()">Apply</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Table -->
+  <div class="card">
+    <h5 class="card-header">Influencers</h5>
+    <div class="table-responsive text-nowrap">
+      <table class="table">
+        <thead class="table-light">
+          <tr>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Email</th>
+            <th>Code</th>
+            <th>Pro</th>
+            <th>Completed</th>
+            <th>Verified</th>
+            <th>Completed Referrals</th>
+            <th>Coins</th>
+            <th>Joined</th>
+            <th class="text-end">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="table-border-bottom-0">
+          <tr *ngFor="let it of items()">
+            <td><strong>{{ it.full_name }}</strong></td>
+            <td>{{ it.phone }}</td>
+            <td>{{ it.email }}</td>
+            <td>{{ it.referral_code }}</td>
+            <td>
+              <span class="badge" [class.bg-label-success]="it.pro_active" [class.bg-label-secondary]="!it.pro_active">
+                {{ it.pro_active ? 'Active' : 'Inactive' }}
+              </span>
+            </td>
+            <td>
+              <span class="badge" [class.bg-label-success]="it.profile_completed" [class.bg-label-warning]="!it.profile_completed">
+                {{ it.profile_completed ? 'Yes' : 'No' }}
+              </span>
+            </td>
+            <td>
+              <span class="badge" [class.bg-label-success]="!!it.phone_verified_at" [class.bg-label-secondary]="!it.phone_verified_at">
+                {{ it.phone_verified_at ? 'Yes' : 'No' }}
+              </span>
+            </td>
+            <td>{{ it.referrals_completed }}</td>
+            <td>{{ it.coins_earned }}</td>
+            <td><small class="text-muted">{{ it.profile_created_at | date:'medium' }}</small></td>
+            <td class="text-end">
+              <a class="btn btn-sm btn-outline-primary" [routerLink]="['/influencers', it.id]">View</a>
+            </td>
+          </tr>
+          <tr *ngIf="!items().length">
+            <td colspan="11" class="text-center text-muted py-4">No influencers found.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  
+    <!-- Pagination -->
+    <div class="card-footer d-flex align-items-center justify-content-between">
+      <div><small>
+        Showing {{ offset()+1 }}–{{ min(offset()+limit(), total()) }} of {{ total() }}
+      </small></div>
+      <div class="d-flex gap-2">
+        <button class="btn btn-outline-secondary btn-sm" (click)="prevPage()" [disabled]="offset()===0">Prev</button>
+        <button class="btn btn-outline-secondary btn-sm" (click)="nextPage()" [disabled]="offset()+limit()>=total()">Next</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Create slide-in -->
+  <app-influencer-create *ngIf="showCreate()" (close)="closeCreate()" (created)="onCreated($event)"></app-influencer-create>
+  

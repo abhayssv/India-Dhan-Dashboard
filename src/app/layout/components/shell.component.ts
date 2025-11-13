@@ -20,6 +20,7 @@ import {
     private router = inject(Router);
     auth = inject(AuthStore);
   
+  
     currentYear!: number;
   
     // --- Mobile menu (Sneat side nav) ---
@@ -59,6 +60,7 @@ import {
     isActive = (path: string) => this.router.url.startsWith(path);
   
     ngOnInit(): void {
+      console.log(22, this.auth.canStrict('nbfc.read'));
       this.currentYear = new Date().getFullYear();
     }
 

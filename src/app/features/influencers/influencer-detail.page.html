@@ -1,0 +1,79 @@
+<!-- Breadcrumb + Back -->
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb mb-0">
+        <li class="breadcrumb-item"><a routerLink="/dashboard">Dashboard</a></li>
+        <li class="breadcrumb-item"><a routerLink="/influencers">Influencers</a></li>
+        <li class="breadcrumb-item active" aria-current="page">
+            {{ data()?.profile?.full_name || 'Influencer' }}
+        </li>
+      </ol>
+    </nav>
+  
+    <a class="btn btn-outline-secondary" routerLink="/influencers">
+      <i class="bx bx-left-arrow-alt me-1"></i> Back
+    </a>
+  </div>
+  
+  <!-- Loading -->
+  <div class="card mb-3" *ngIf="loading()">
+    <div class="card-body"><span class="placeholder col-3"></span></div>
+  </div>
+  
+  <!-- Empty -->
+  <div class="alert alert-warning" *ngIf="!loading() && !data()">Influencer not found.</div>
+  
+  <!-- Content -->
+  <div class="row" *ngIf="!loading() && data() as d">
+    <div class="col-12 col-lg-8">
+      <div class="card mb-3">
+        <div class="card-header"><h5 class="mb-0">Profile</h5></div>
+        <div class="card-body">
+          <div class="row gy-2">
+            <div class="col-sm-6"><div class="text-muted small">Full name</div><div class="fw-medium">{{ d.profile.full_name }}</div></div>
+            <div class="col-sm-6"><div class="text-muted small">Email</div><div class="fw-medium">{{ d.profile.email }}</div></div>
+            <div class="col-sm-6"><div class="text-muted small">Phone</div><div class="fw-medium">{{ d.profile.phone }}</div></div>
+            <div class="col-sm-6"><div class="text-muted small">Referral Code</div><div class="fw-medium">{{ d.profile.referral_code }}</div></div>
+  
+            <div class="col-sm-6"><div class="text-muted small">PAN</div><div class="fw-medium">{{ maskPan(d.profile.pan) }}</div></div>
+            <div class="col-sm-6"><div class="text-muted small">Aadhaar</div><div class="fw-medium">{{ maskAadhaar(d.profile.aadhaar) }}</div></div>
+            <div class="col-sm-6"><div class="text-muted small">Gender</div><div class="fw-medium">{{ fmtGender(d.profile.gender) }}</div></div>
+            <div class="col-sm-6"><div class="text-muted small">Address</div><div class="fw-medium">{{ formatAddress(d.profile.address, d.profile.city, d.profile.state) }}</div>        </div>
+  
+            <div class="col-sm-6"><div class="text-muted small">Created</div><div class="fw-medium">{{ d.profile.created_at | date:'medium' }}</div></div>
+            <div class="col-sm-6"><div class="text-muted small">Updated</div><div class="fw-medium">{{ d.profile.updated_at | date:'medium' }}</div></div>
+          </div>
+        </div>
+      </div>
+  
+      <div class="card mb-3" *ngIf="d.pro as p">
+        <div class="card-header"><h5 class="mb-0">Pro Campaign</h5></div>
+        <div class="card-body">
+          <div class="row gy-2">
+            <div class="col-sm-4"><div class="text-muted small">Premium</div><span class="badge" [class.bg-label-success]="p.is_premium" [class.bg-label-secondary]="!p.is_premium">{{ p.is_premium ? 'Yes' : 'No' }}</span></div>
+            <div class="col-sm-4"><div class="text-muted small">Active</div><span class="badge" [class.bg-label-success]="p.active" [class.bg-label-secondary]="!p.active">{{ p.active ? 'Active' : 'Inactive' }}</span></div>
+            <div class="col-sm-4"><div class="text-muted small">Code</div><div class="fw-medium">{{ p.referral_code }}</div></div>
+  
+            <div class="col-sm-6"><div class="text-muted small">Bonus Referrer</div><div class="fw-medium">₹{{ p.bonus_referrer ?? 0 }}</div></div>
+            <div class="col-sm-6"><div class="text-muted small">Bonus Referred</div><div class="fw-medium">₹{{ p.bonus_referred ?? 0 }}</div></div>
+  
+            <div class="col-sm-6"><div class="text-muted small">Starts</div><div class="fw-medium">{{ p.starts_at ? (p.starts_at | date:'medium') : '—' }}</div></div>
+            <div class="col-sm-6"><div class="text-muted small">Ends</div><div class="fw-medium">{{ p.ends_at ? (p.ends_at | date:'medium') : '—' }}</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Side summary -->
+    <div class="col-12 col-lg-4">
+      <div class="card mb-3">
+        <div class="card-header"><h6 class="mb-0">Stats</h6></div>
+        <div class="card-body">
+          <div class="mb-2 d-flex align-items-center"><i class="bx bx-check-circle me-2"></i><span class="fw-medium">Completed: {{ d.stats.referrals_completed }}</span></div>
+          <div class="mb-2 d-flex align-items-center"><i class="bx bx-list-check me-2"></i><span class="fw-medium">Total: {{ d.stats.referrals_total }}</span></div>
+          <div class="mb-2 d-flex align-items-center"><i class="bx bx-coin me-2"></i><span class="fw-medium">Coins: {{ d.stats.coins_earned }}</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  

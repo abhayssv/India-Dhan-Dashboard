@@ -1,0 +1,172 @@
+<div class="offcanvas offcanvas-end show" tabindex="-1" style="visibility: visible; width: 520px;">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title">Add Influencer</h5>
+      <button type="button" class="btn-close text-reset" (click)="close.emit()"></button>
+    </div>
+  
+    <div class="offcanvas-body">
+      <form [formGroup]="form" (ngSubmit)="create()" novalidate>
+        <!-- Full name -->
+        <div class="mb-3">
+          <label class="form-label">Full name</label>
+          <input
+            class="form-control"
+            formControlName="full_name"
+            [class.is-invalid]="isInvalid('full_name')"
+          />
+          <div class="invalid-feedback" *ngIf="hasError('full_name','required')">
+            Name is required.
+          </div>
+          <div class="invalid-feedback" *ngIf="hasError('full_name','minlength')">
+            Minimum 3 characters.
+          </div>
+        </div>
+  
+        <!-- Phone -->
+        <div class="mb-3">
+          <label class="form-label">Phone</label>
+          <input
+            class="form-control"
+            formControlName="phone"
+            inputmode="tel"
+            maxlength="10"
+            [class.is-invalid]="isInvalid('phone')"
+          />
+          <div class="invalid-feedback" *ngIf="hasError('phone','required')">
+            Phone is required.
+          </div>
+          <div class="invalid-feedback" *ngIf="hasError('phone','pattern')">
+            Enter a valid 10-digit number.
+          </div>
+        </div>
+  
+        <!-- Email -->
+        <div class="mb-3">
+          <label class="form-label">Email</label>
+          <input
+            class="form-control"
+            formControlName="email"
+            inputmode="email"
+            [class.is-invalid]="isInvalid('email')"
+          />
+          <div class="invalid-feedback" *ngIf="hasError('email','required')">
+            Email is required.
+          </div>
+          <div class="invalid-feedback" *ngIf="hasError('email','email')">
+            Enter a valid email address.
+          </div>
+        </div>
+  
+        <!-- Referral code -->
+        <div class="mb-3">
+          <label class="form-label">Referral code</label>
+          <input
+            class="form-control"
+            formControlName="referral_code"
+            placeholder="e.g. TECHPOWER10"
+            [class.is-invalid]="isInvalid('referral_code')"
+          />
+          <div class="invalid-feedback" *ngIf="hasError('referral_code','required')">
+            Referral code is required.
+          </div>
+          <div class="invalid-feedback" *ngIf="hasError('referral_code','pattern')">
+            Use 4–20 chars: uppercase letters, digits, dashes (e.g. <code>SONU-10</code>).
+          </div>
+        </div>
+  
+        <!-- Pro toggle -->
+        <div class="form-check form-switch mb-3">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            id="proToggle"
+            [checked]="withPro()"
+            (change)="withPro.set($any($event.target).checked)"
+          />
+          <label class="form-check-label" for="proToggle">Enable Pro campaign</label>
+        </div>
+  
+        <!-- Pro block -->
+        <div class="card mb-3" *ngIf="withPro()">
+          <div class="card-body">
+            <div class="form-check form-switch mb-3">
+              <input class="form-check-input" type="checkbox" id="pro_active" formControlName="pro_active" />
+              <label class="form-check-label" for="pro_active">Pro Active</label>
+            </div>
+  
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Bonus (Referrer)</label>
+                <input
+                  class="form-control"
+                  type="number"
+                  formControlName="pro_bonus_referrer"
+                  [class.is-invalid]="isInvalid('pro_bonus_referrer')"
+                />
+                <div class="invalid-feedback" *ngIf="hasError('pro_bonus_referrer','required')">
+                  Required.
+                </div>
+                <div class="invalid-feedback" *ngIf="hasError('pro_bonus_referrer','min')">
+                  Must be ≥ 0.
+                </div>
+              </div>
+  
+              <div class="col-md-6">
+                <label class="form-label">Bonus (Referred)</label>
+                <input
+                  class="form-control"
+                  type="number"
+                  formControlName="pro_bonus_referred"
+                  [class.is-invalid]="isInvalid('pro_bonus_referred')"
+                />
+                <div class="invalid-feedback" *ngIf="hasError('pro_bonus_referred','required')">
+                  Required.
+                </div>
+                <div class="invalid-feedback" *ngIf="hasError('pro_bonus_referred','min')">
+                  Must be ≥ 0.
+                </div>
+              </div>
+  
+              <div class="col-md-6">
+                <label class="form-label">Starts (UTC)</label>
+                <input
+                  class="form-control"
+                  type="datetime-local"
+                  formControlName="pro_starts_at"
+                  [class.is-invalid]="isInvalid('pro_starts_at')"
+                />
+                <div class="invalid-feedback" *ngIf="hasError('pro_starts_at','required')">
+                  Start time is required.
+                </div>
+              </div>
+  
+              <div class="col-md-6">
+                <label class="form-label">Ends (UTC)</label>
+                <input
+                  class="form-control"
+                  type="datetime-local"
+                  formControlName="pro_ends_at"
+                  [class.is-invalid]="isInvalid('pro_ends_at') || dateRangeInvalid"
+                />
+                <div class="invalid-feedback" *ngIf="hasError('pro_ends_at','required')">
+                  End time is required.
+                </div>
+                <div class="invalid-feedback" *ngIf="!hasError('pro_ends_at','required') && dateRangeInvalid">
+                  End time must be after start time.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Actions -->
+        <div class="d-flex justify-content-end gap-2">
+          <button type="button" class="btn btn-outline-secondary" (click)="close.emit()">Cancel</button>
+          <button class="btn btn-primary" [disabled]="saving() || form.invalid || (withPro() && dateRangeInvalid)">
+            Create
+          </button>
+        </div>
+      </form>
+    </div>
+</div>
+  
